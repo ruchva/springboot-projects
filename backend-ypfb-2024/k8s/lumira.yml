@@ -1,0 +1,66 @@
+﻿﻿apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: pod-lumira-app
+  labels:
+    app: pod-lumira-app
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: pod-lumira-app
+  template:
+    metadata:
+      labels:
+        app: pod-lumira-app
+    spec:
+      containers:
+        - name: pod-lumira-app
+          image: reg.ypfb.gob.bo/desarrollo-core/base-backend:latest
+          imagePullPolicy: Always
+          env:
+            - name: SPRING_PROFILES_ACTIVE
+              value: "beta"
+            - name: DATABASE_HOST
+              value: "172.16.0.112"
+            #- name:
+            #  value:
+          ports:
+            - containerPort: 8080
+      imagePullSecrets:
+        - name: regcred
+---
+apiVersion: /v1
+kind: Service
+metadata:
+  name: pod-lumira-app
+spec:
+  selector:
+    app: pod-lumira-app
+  ports:
+    - port: 8080
+      targetPort: 8080
+---
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: pod-lumira-app
+  annotations:
+    kubernetes.io/ingress.class: traefik
+    traefik.ingress.kubernetes.io/router.middlewares: default-redirect@kubernetescrd
+spec:
+  tls:
+    - hosts:
+        - applumira.beta.ypfb.gob.bo
+      secretName: wildcardcert
+  rules:
+    - host: applumira.beta.ypfb.gob.bo
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: pod-lumira-app
+                port:
+                  number: 8080

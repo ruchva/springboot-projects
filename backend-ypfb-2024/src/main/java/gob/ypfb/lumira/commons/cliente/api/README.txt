@@ -1,0 +1,1 @@
+Para Implementaciones de API's Externos o Internos

@@ -1,0 +1,13 @@
+site_name: lumira
+site_description: Sistema de Portal de Ventas de información y Servicio
+docs_dir: 'techdocs'
+nav:
+  - Home: index.md
+  - Readme: https://git.ypfb.gob.bo/group:default/vpacf/-/blob/develop/README.md
+  - Changelog: https://git.ypfb.gob.bo/group:default/vpacf/-/blob/master/CHANGELOG.md
+plugins:
+  - techdocs-core
+
+theme: 
+  name: material
+  font: false

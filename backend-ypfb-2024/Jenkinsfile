@@ -1,0 +1,70 @@
+#!groovy
+pipeline {
+
+    agent {
+       label 'nodo_root_92'
+    }
+
+    //agent any
+    triggers {
+        pollSCM('* * * * *')
+    }
+    environment {
+        registry = 'reg.ypfb.gob.bo'
+        //GIT_COMMIT = sh(script: 'git rev-parse --short HEAD', returnStdout: true)
+        GIT_COMMIT_HASH = ''
+    }
+
+    tools {
+       gradle 'gradle-7.1'
+       //jdk 'java-11'
+    }
+    stages {
+        stage("Clone Git Repository") {
+            steps {
+               git(
+                    url: "https://git.ypfb.gob.bo/desarrollo-core/base-backend.git",
+                    branch: "lumira",
+                    credentialsId: 'deployuser',
+                    changelog: true,
+                    poll: true
+                )
+            }
+        }
+        stage('Compile'){
+            steps{
+                //sh "ls -lsa"
+                sh 'gradle clean assemble'
+            }
+        }
+
+        stage('Test') {
+            steps {
+                sh "gradle test"
+                sh "ls -lsa build/libs/ "
+                //sh 'gradle -version'
+            }
+        }
+
+        stage("Code Coverage") {
+            steps {
+                echo " lumira > Code Coverage "
+                sh "gradle jacocoTestReport"
+
+        	 	publishHTML (target: [
+         	        reportDir: 'build/reports/jacoco/test/html',
+         			reportFiles: 'index.html',
+         			reportName: 'JacocoReport'
+         	    ])
+
+         		sh "gradle jacocoTestCoverageVerification"
+         	}
+        }
+
+        stage('SonarQube Analysis') {
+            steps {
+                echo " lumira > SonarQube Analysis"
+            }
+        }
+    }
+}

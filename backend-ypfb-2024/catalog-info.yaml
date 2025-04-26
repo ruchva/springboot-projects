@@ -1,0 +1,25 @@
+apiVersion: backstage.io/v1alpha1
+kind: Component
+metadata:
+  name: "lumira"
+  title: "lumira"
+  description: "Sistema de Portal de Ventas de información y Servicio"
+  tags:
+    - api-rest
+    - postgresql
+    - java
+    - sprintboot
+  links:
+    - url: https://lumira.beta.ypfb.gob.bo/swagger/index.html
+      title: service swagger
+      icon: dashboard
+  annotations:
+    backstage.io/techdocs-ref: dir:.
+    git.ypfb.gob.b/project-slug: "group:default/vpacf"
+    git.ypfb.gob.b/repository: https://git.ypfb.gob.bo/vpacf/"group:default/vpacf"
+
+spec:
+  type: Service
+  lifecycle: experimental
+  owner: "group:default/vpacf"   
+  system: group:default/vpacf-cnih
